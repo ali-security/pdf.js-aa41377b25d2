@@ -1,23 +1,5 @@
 name: Font tests
 on:
-  push:
-    paths:
-      - 'gulpfile.mjs'
-      - 'src/**'
-      - 'test/test.mjs'
-      - 'test/font/**'
-      - '.github/workflows/font_tests.yml'
-    branches:
-      - master
-  pull_request:
-    paths:
-      - 'gulpfile.mjs'
-      - 'src/**'
-      - 'test/test.mjs'
-      - 'test/font/**'
-      - '.github/workflows/font_tests.yml'
-    branches:
-      - master
   workflow_dispatch:
 permissions:
   contents: read

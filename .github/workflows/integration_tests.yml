@@ -1,25 +1,5 @@
 name: Integration tests
 on:
-  push:
-    paths:
-      - 'gulpfile.mjs'
-      - 'src/**'
-      - 'test/test.mjs'
-      - 'test/integration/**'
-      - 'web/**'
-      - '.github/workflows/integration_tests.yml'
-    branches:
-      - master
-  pull_request:
-    paths:
-      - 'gulpfile.mjs'
-      - 'src/**'
-      - 'test/test.mjs'
-      - 'test/integration/**'
-      - 'web/**'
-      - '.github/workflows/integration_tests.yml'
-    branches:
-      - master
   workflow_dispatch:
 permissions:
   contents: read

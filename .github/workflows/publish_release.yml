@@ -1,15 +1,14 @@
 name: Publish release
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
 permissions:
   contents: read
-  id-token: write
 
 jobs:
   publish:
     name: Publish
     runs-on: ubuntu-latest
+    timeout-minutes: 45
 
     strategy:
       matrix:
@@ -27,13 +26,22 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-          registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
         run: npm ci
 
       - name: Build the `pdfjs-dist` library
         run: npx gulp dist
+        env:
+          PDFJS_BUILD_NUMBER: "284"
+          PDFJS_BUILD_COMMIT: 7e5b36c2d
 
-      - name: Publish the `pdfjs-dist` library to NPM
-        run: npm publish ./build/dist
+      - name: Pack the `pdfjs-dist` library
+        run: npm pack ./build/dist
+
+      - name: Upload the `pdfjs-dist` tarball
+        uses: actions/upload-artifact@v4
+        with:
+          name: pdfjs-dist-tgz
+          path: pdfjs-dist-*.tgz
+          if-no-files-found: error

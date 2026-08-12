@@ -1,19 +1,5 @@
 name: Lint Fluent Reference Files
 on:
-  push:
-    paths:
-      - 'l10n/en-US/**.ftl'
-      - '.github/fluent_linter_config.yml'
-      - '.github/workflows/fluent_linter.yml'
-    branches:
-      - master
-  pull_request:
-    paths:
-      - 'l10n/en-US/**.ftl'
-      - '.github/fluent_linter_config.yml'
-      - '.github/workflows/fluent_linter.yml'
-    branches:
-      - master
   workflow_dispatch:
 permissions:
   contents: read

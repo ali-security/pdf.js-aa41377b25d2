@@ -32,11 +32,33 @@ function rewriteWebArchiveUrl(url) {
 async function downloadFile(file, url) {
   url = rewriteWebArchiveUrl(url);
 
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(response.statusText);
+  // The hosts serving the test PDFs (web.archive.org, bugzilla.mozilla.org)
+  // intermittently time out when fetched from CI runners; since a missed
+  // download later shows up as a spurious unit-test failure (the PDF simply
+  // isn't there), retry a few times with a growing delay before giving up.
+  const MAX_ATTEMPTS = 5;
+  let lastError;
+
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+      return await fs.promises.writeFile(file, response.body);
+    } catch (ex) {
+      lastError = ex;
+
+      if (attempt < MAX_ATTEMPTS) {
+        console.log(
+          `Retrying download of ${url} (attempt ${attempt + 1}/${MAX_ATTEMPTS})...`
+        );
+        const delay = 2000 * 2 ** (attempt - 1);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
   }
-  return fs.promises.writeFile(file, response.body);
+  throw lastError;
 }
 
 async function downloadManifestFiles(manifest) {

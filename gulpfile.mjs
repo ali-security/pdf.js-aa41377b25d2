@@ -1017,6 +1017,13 @@ function createBuildNumber(done) {
         );
       }
 
+      // The CI fork's checkout lacks the upstream history back to
+      // `config.baseVersion` and carries extra commits on top of the release,
+      // so the commit count above is wrong; allow pinning it explicitly.
+      if (process.env.PDFJS_BUILD_NUMBER) {
+        buildNumber = process.env.PDFJS_BUILD_NUMBER;
+      }
+
       console.log("Extension build number: " + buildNumber);
 
       const version = config.versionPrefix + buildNumber;
@@ -1025,6 +1032,11 @@ function createBuildNumber(done) {
         let buildCommit = "";
         if (!err2) {
           buildCommit = stdout2.replace("\n", "");
+        }
+        // The CI fork's checkout carries extra commits on top of the released
+        // commit, so HEAD is not the released one; allow pinning it explicitly.
+        if (process.env.PDFJS_BUILD_COMMIT) {
+          buildCommit = process.env.PDFJS_BUILD_COMMIT;
         }
 
         createStringSource(

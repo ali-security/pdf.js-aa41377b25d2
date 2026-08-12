@@ -1,25 +1,5 @@
 name: Unit tests
 on:
-  push:
-    paths:
-      - 'gulpfile.mjs'
-      - 'src/**'
-      - 'test/test.mjs'
-      - 'test/unit/**'
-      - 'web/**'
-      - '.github/workflows/unit_tests.yml'
-    branches:
-      - master
-  pull_request:
-    paths:
-      - 'gulpfile.mjs'
-      - 'src/**'
-      - 'test/test.mjs'
-      - 'test/unit/**'
-      - 'web/**'
-      - '.github/workflows/unit_tests.yml'
-    branches:
-      - master
   workflow_dispatch:
 permissions:
   contents: read
@@ -27,6 +7,7 @@ permissions:
 jobs:
   test:
     name: Test
+    timeout-minutes: 60
 
     strategy:
       fail-fast: false
@@ -35,7 +16,6 @@ jobs:
         os: [windows-latest, ubuntu-latest]
 
     runs-on: ${{ matrix.os }}
-    environment: code-coverage
 
     steps:
       - name: Checkout repository
@@ -71,13 +51,3 @@ jobs:
           path: test/pdfs/*.pdf
           key: cached-pdf-files-${{ hashFiles('test/pdfs/*.pdf') }}
           enableCrossOsArchive: true
-
-      - name: Upload results to Codecov
-        uses: codecov/codecov-action@57e3a136b779b570ffcdbf80b3bdc90e7fab3de2 # v6.0.0
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          fail_ci_if_error: true
-          files: ./build/coverage/unit/lcov.info
-          flags: unittest
-          name: codecov-umbrella
-          verbose: true

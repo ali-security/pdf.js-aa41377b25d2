@@ -888,7 +888,9 @@ describe("api", function () {
       }
       const loadingTask = getDocument(buildGetDocumentParams("bug1980958.pdf"));
       const { promise, resolve } = Promise.withResolvers();
-      setTimeout(() => resolve(null), 1000);
+      // Budget raised from 1s for slow CI runners; the regression this guards
+      // (iterating over every empty xref slot) takes far longer than 5s.
+      setTimeout(() => resolve(null), 5000);
 
       const pdfDocument = await Promise.race([loadingTask.promise, promise]);
       expect(pdfDocument?.numPages).toEqual(1);

@@ -1,8 +1,6 @@
 name: Update locales
 
 on:
-  schedule:
-    - cron: "0 0 * * 5" # Every Friday at midnight UTC
   workflow_dispatch: # Allow manual triggering
 
 permissions:
